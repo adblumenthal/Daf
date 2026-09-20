@@ -1,0 +1,269 @@
+{
+  "skill_name": "daf",
+  "version": "3.1.1",
+  "how_to_run": "Run each eval in a fresh chat with the skill installed. Evals with 'turns' are multi-turn: send each turn in order; grade the final turn. Mark each expectation pass or fail and note evidence.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "exact-daf-regression",
+      "prompt": "/daf Chullin 23b",
+      "expected_output": "Full v2-quality lesson on Chullin 23b, followed by the continue-learning menu and a progress line.",
+      "files": [],
+      "expectations": [
+        "Teaches Chullin 23b specifically and does not call it today's daf",
+        "Contains no Daf Yomi date, countdown, or cycle progress",
+        "Includes Mishnah (or says none appears), main sugyot, Rashi/Tosafot, halacha, Aramaic, exactly 3 key takeaways, review questions, and a preview of Chullin 24a",
+        "Ends with a numbered menu listing all 7 follow-up options",
+        "Ends with a single progress-saved line (or honestly states progress could not be saved)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "followup-tosafot-no-regeneration",
+      "prompt": "4",
+      "expected_output": "A Tosafot addendum only, anchored to the lesson already given.",
+      "files": [],
+      "expectations": [
+        "Output is titled as an addendum on Tosafot for Chullin 23b",
+        "Does not repeat the header, the Mishnah, the sugya walkthrough, the Aramaic list, the key takeaways, or the preview",
+        "Discusses Tosafot comments not already explained in the lesson, or goes a layer deeper on ones mentioned",
+        "Re-offers only the remaining 6 options in one line"
+      ],
+      "turns": [
+        "/daf Chullin 23b",
+        "4"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "followup-multi-select",
+      "prompt": "5 7",
+      "expected_output": "One addendum with an Other Rishonim subsection and a Parallel sugyot subsection.",
+      "files": [],
+      "expectations": [
+        "Produces one addendum with two subsections, Rishonim first, then parallels",
+        "Every Rishon discussed is attributed to a retrieved text; no Rishon is named with an invented position",
+        "Parallel sugyot give a location and explain what is shared and what differs",
+        "Does not regenerate the lesson"
+      ],
+      "turns": [
+        "/daf Chullin 23b",
+        "5 7"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "followup-pdf-includes-addenda",
+      "prompt": "2",
+      "expected_output": "A PDF of the lesson plus the earlier addendum, with no new source retrieval.",
+      "files": [],
+      "expectations": [
+        "Delivers a PDF file",
+        "The PDF contains the original lesson and the Tosafot addendum",
+        "The PDF omits the follow-up menu and the progress line",
+        "No new Sefaria text retrieval happens for this turn"
+      ],
+      "turns": [
+        "/daf Chullin 23b",
+        "4",
+        "2"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "followup-audio",
+      "prompt": "1",
+      "expected_output": "An MP3 audio shiur of the lesson so far, plus its spoken script.",
+      "files": [],
+      "expectations": [
+        "Delivers an MP3 (or, if no speech engine exists, the script plus a plain explanation)",
+        "Delivers the spoken script as a text file",
+        "The script contains no Hebrew-script characters, tables, URLs, or bullet lists",
+        "Review questions are followed by [pause] markers",
+        "Reports the length in minutes"
+      ],
+      "turns": [
+        "/daf Chullin 23b",
+        "1"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "menu-omits-used-options",
+      "prompt": "/daf Berakhot 2a tosafot",
+      "expected_output": "Lesson with Tosafot focus; menu omits option 4.",
+      "files": [],
+      "expectations": [
+        "The lesson has an expanded Tosafot layer",
+        "The end menu does not list 'Go deeper on Tosafot'",
+        "The remaining options keep their original numbers (e.g. 5 is still Other Rishonim)"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "yomi-with-rishonim-and-export",
+      "prompt": "/daf yomi rishonim export",
+      "expected_output": "Today's Daf Yomi lesson with an Other Rishonim section, plus a PDF.",
+      "files": [],
+      "expectations": [
+        "States Gregorian and Hebrew dates and masechet completion context",
+        "Includes an Other Rishonim section with 2 to 4 Rishonim",
+        "Delivers a PDF of the lesson",
+        "The menu omits the PDF and Other Rishonim options"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "bymishnah-start-berakhot",
+      "prompt": "/daf bymishnah Berakhot",
+      "expected_output": "First unit of Berakhot: Mishnah 1:1 and all its Gemara, ending where Mishnah 1:2 begins.",
+      "files": [],
+      "expectations": [
+        "Header states 'Mishnah 1 of N' where N matches Sefaria's count of mishnayot in Berakhot",
+        "Header gives the exact Gemara span from Berakhot 2a",
+        "The span ends where the next Mishnah (me'eimatai korin et shema b'shacharit) begins on 9b, not at the end of 2a",
+        "The lesson is delivered in parts if too long, with Part 1 labeled 'of' the total parts",
+        "Previews the next Mishnah with its position",
+        "Contains no Daf Yomi dates or cycle progress"
+      ],
+      "notes": "Verify the 9b boundary against a printed Gemara."
+    },
+    {
+      "id": 9,
+      "name": "bymishnah-bavli-order",
+      "prompt": "/daf bymishnah Sanhedrin 10:1",
+      "expected_output": "Perek Chelek (Mishnah Sanhedrin 10:1), noting that the Bavli places this perek eleventh.",
+      "files": [],
+      "expectations": [
+        "Teaches the Mishnah beginning kol Yisrael yesh lahem chelek",
+        "Notes once that the Bavli perek order differs from the Mishnah's",
+        "Does not guess boundaries if the map could not be built"
+      ],
+      "notes": "Labels use standard Mishnah numbering, so Chelek is 10:1 even though the Bavli prints it as the eleventh perek."
+    },
+    {
+      "id": 10,
+      "name": "bymishnah-no-bavli",
+      "prompt": "/daf bymishnah Peah",
+      "expected_output": "Explains that Peah has no Bavli Gemara and offers an alternative.",
+      "files": [],
+      "expectations": [
+        "Does not invent a Gemara span",
+        "Offers a Mishnah-only study or another masechet"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "bymishnah-natural-trigger",
+      "prompt": "I want to start learning Chullin mishnah by mishnah, one a day.",
+      "expected_output": "Skill triggers without the slash command and starts ByMishnah Chullin.",
+      "files": [],
+      "expectations": [
+        "The daf skill is used",
+        "Starts at the first unit of Chullin with position 'Mishnah 1 of N'"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "log-show",
+      "prompt": "/daf log",
+      "expected_output": "Compact summary of last session and each track's position, no lesson.",
+      "files": [],
+      "expectations": [
+        "Shows where the learner was last",
+        "Shows ByMishnah position with completed count and next unit",
+        "Does not teach a lesson"
+      ],
+      "turns": [
+        "/daf bymishnah Chullin",
+        "(new chat) /daf log"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "log-continue",
+      "prompt": "/daf continue",
+      "expected_output": "Resumes ByMishnah Chullin at unit 2.",
+      "files": [],
+      "expectations": [
+        "Teaches the second unit of Chullin, not the first",
+        "Progress line shows the updated position"
+      ],
+      "turns": [
+        "/daf bymishnah Chullin",
+        "(new chat) /daf continue"
+      ],
+      "notes": "Tests persistence across chats via the memory store."
+    },
+    {
+      "id": 14,
+      "name": "log-reset-confirms",
+      "prompt": "/daf log reset Chullin",
+      "expected_output": "Asks for confirmation before clearing.",
+      "files": [],
+      "expectations": [
+        "Asks for confirmation before deleting progress",
+        "Does not clear other tracks"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "nolog",
+      "prompt": "/daf Chullin 24a nolog",
+      "expected_output": "Normal lesson, nothing recorded.",
+      "files": [],
+      "expectations": [
+        "Teaches Chullin 24a normally",
+        "Does not write to the log or memory, and has no progress-saved line"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "audio-modifier-fresh",
+      "prompt": "/daf Chullin 23b short audio",
+      "expected_output": "Short lesson in chat plus a 5 to 8 minute MP3.",
+      "files": [],
+      "expectations": [
+        "Lesson follows short mode",
+        "Delivers an MP3 of roughly 5 to 8 minutes, plus the script",
+        "The menu omits the audio option"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "rishonim-named",
+      "prompt": "/daf Chullin 23b rishonim Ramban",
+      "expected_output": "Prioritizes Ramban; says plainly if Ramban is unavailable on this daf.",
+      "files": [],
+      "expectations": [
+        "Ramban is discussed first if available on Sefaria for this daf",
+        "If unavailable, says so rather than inventing a Ramban",
+        "Other Rishonim, if added, are clearly attributed"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "followup-without-lesson",
+      "prompt": "more halacha on Chullin 23b",
+      "expected_output": "Standalone halacha discussion with a one-line context header, not a full lesson.",
+      "files": [],
+      "expectations": [
+        "Traces the Gemara to later authorities (Rambam, Tur, Shulchan Arukh) with Ein Mishpat sources",
+        "Distinguishes sources from practical rulings and suggests asking a rav for personal questions",
+        "Does not produce a full lesson"
+      ],
+      "notes": "Run in a new chat with no prior lesson."
+    },
+    {
+      "id": 19,
+      "name": "guard-bad-reference",
+      "prompt": "/daf NotAMasechet 23b",
+      "expected_output": "Asks for a valid masechet; does not guess.",
+      "files": [],
+      "expectations": [
+        "Does not substitute a similar masechet",
+        "Does not log anything"
+      ]
+    }
+  ]
+}

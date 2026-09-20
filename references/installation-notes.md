@@ -13,3 +13,7 @@ Recommended goals:
 Do not hard-code a vendor-specific skill path into the portable package unless publishing a vendor-specific installer; paths and UI flows can change.
 
 For a future marketplace or plugin version, wrap this repository rather than forking the teaching instructions.
+
+## Bundled data
+
+`data/` holds compact data derived from Sefaria's public export: ByMishnah maps, the archive path index, and per-amud halacha and parallel links. `scripts/vendor/pyluach` is a vendored MIT-licensed calendar library. Rebuild the data with `python tools/build_data.py` (needs git and network access to GitHub); bump `SHA` in that script to move to a newer Sefaria export.

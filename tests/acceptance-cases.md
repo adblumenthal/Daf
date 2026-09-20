@@ -219,3 +219,107 @@ Use these as manual or agent acceptance tests before publishing a release.
 58. `/daf yomi tosafot deep show sources`
     - May perform broader commentary, parallel-sugya, later-source, and citation retrieval because comprehensive treatment was explicitly requested.
     - Still consolidates or parallelizes independent lookups when possible.
+
+## ByMishnah mode
+
+59. `/daf bymishnah Chullin` with no prior progress
+    - Starts at the first Mishnah in Bavli order.
+    - States the masechet's total mishnayot and "Mishnah 1 of N" with its perek label.
+    - Gives the exact Gemara span and stops where the next Mishnah begins, not at a daf boundary.
+    - Contains no Yomi dates, countdowns, or cycle progress.
+
+60. `/daf bymishnah` after a logged session
+    - Continues the active masechet at the next unit.
+    - Shows progress completed before this session.
+
+61. `/daf bymishnah Chullin 3:2`
+    - Jumps to that Mishnah; later sessions continue from it.
+
+62. A unit where the Bavli prints two Mishnayot together
+    - Teaches them as one unit ("Mishnayot 13-14 of N") and says why.
+
+63. A masechet whose Bavli perek order differs from the Mishnah (for example Sanhedrin)
+    - Follows the Bavli order and notes the difference once.
+
+64. A Mishnah with no Bavli Gemara
+    - Teaches it as a Mishnah-only unit and labels it.
+
+65. A unit with a very long Gemara span
+    - Teaches the whole unit, in numbered parts if needed.
+    - Advances the log only after the final part.
+
+66. The final unit of a masechet
+    - Celebrates the siyum and offers another masechet.
+
+67. Sefaria unreachable for the map
+    - Falls back to the host web tool or says the map could not be built; never guesses boundaries.
+
+## Learning log
+
+68. `/daf log`
+    - Shows the last session and each track's position and next step, with no lesson.
+
+69. `/daf continue`
+    - Resumes the most recently used track.
+    - On the Yomi track after missed days, states how many were missed and offers a catch-up range.
+
+70. Any delivered lesson without `nolog`
+    - Is recorded with the learner's local date and ends with one progress line.
+
+71. `/daf Chullin 23b nolog`
+    - Teaches normally and records nothing.
+
+72. A host with no persistent storage
+    - Uses the memory store or offers a downloadable log; never claims a save that did not happen.
+
+## Rishonim, audio, and export
+
+73. `/daf Chullin 23b rishonim`
+    - Adds 2 to 4 Rishonim on the central sugya, drawn from retrieved texts.
+
+74. `/daf Chullin 23b rishonim Ramban`
+    - Prioritizes the named Rishon and says plainly if it is unavailable.
+
+75. `/daf yomi audio`
+    - Teaches the lesson and also delivers an MP3 and its spoken script, with no Hebrew script in the audio text.
+    - If no speech engine exists, delivers the script and says so.
+
+76. `/daf Chullin 23a-33b export`
+    - Delivers a PDF of the lesson as presented, with Hebrew set right-to-left.
+
+## Follow-up menu
+
+77. Any lesson
+    - Ends with a numbered menu of only the unused options, with stable numbering.
+
+78. `/daf Chullin 23b tosafot` then `4`
+    - Option 4 (deeper Tosafot) is absent from the menu, since Tosafot focus was already applied.
+
+79. A lesson followed by `more tosafot`
+    - Produces one addendum that goes past what the lesson already said.
+    - Does not repeat the header, Mishnah, sugya walkthrough, Aramaic, takeaways, or preview.
+
+80. A lesson followed by `5 7`
+    - Produces one addendum with Rishonim and parallel sugyot subsections, then re-offers the rest in one line.
+
+81. A lesson, an addendum, then `2`
+    - The PDF includes the lesson and the addendum, and nothing is re-retrieved.
+
+82. `more halacha` with no lesson in the conversation
+    - Uses the given reference or the log's last session and writes a standalone focused discussion.
+
+## Works out of the box
+
+83. A fresh install in a sandbox that blocks sefaria.org and hebcal.com
+    - `/daf yomi` gives the correct assignment, Hebrew date, special-day notice, and completion context with no settings changed.
+    - `/daf Chullin 23b` is grounded in retrieved Sefaria text (archive), not memory.
+
+84. `/daf Chullin 23b rishonim`
+    - Cites only Rishonim that comment on 23b by Gemara amud.
+    - Does not cite Ran, Rif, Baal HaMaor, or Nimukei Yosef by a Gemara daf number.
+
+85. `/daf bymishnah Berakhot` with no network at all
+    - Builds the unit from the bundled map.
+
+86. `/daf Chullin 23b` then `6`
+    - The halacha addendum draws on the bundled Ein Mishpat refs and fetched Rambam / Shulchan Arukh text.

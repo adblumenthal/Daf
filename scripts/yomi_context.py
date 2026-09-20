@@ -10,6 +10,11 @@ Examples:
 
 This helper is for /daf yomi calendar resolution. Exact-daf requests go
 directly to Sefaria and do not depend on the daily cycle.
+
+By default it works fully offline (offline_calendar.py: Hebcal's Daf Yomi
+algorithm plus the vendored pyluach calendar, verified against Hebcal).
+Pass --live to prefer the Hebcal API; if Hebcal is unreachable it falls back
+to the offline calculation automatically.
 """
 
 # Created by Adam Blumenthal in honor of David and Barbara Blumenthal,
@@ -24,13 +29,14 @@ import re
 import sys
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 HEBCAL = "https://www.hebcal.com/hebcal"
 
 def _get_json(url: str) -> dict:
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "daf/2.0 (+Agent Skills)"}
+        headers={"User-Agent": "daf/3.0 (+Agent Skills)"}
     )
     with urllib.request.urlopen(req, timeout=20) as resp:
         return json.load(resp)
@@ -143,6 +149,7 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--date", required=True, help="Start date YYYY-MM-DD")
     p.add_argument("--through", help="Inclusive end date YYYY-MM-DD")
+    p.add_argument("--live", action="store_true", help="Prefer the Hebcal API over the offline calculation")
     args = p.parse_args()
 
     try:
@@ -156,7 +163,22 @@ def main() -> int:
         print("--through may not be earlier than --date", file=sys.stderr)
         return 2
 
-    payload = _hebcal(start, end, daf=True, calendar=True)
+    def offline(note: str | None = None) -> int:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import offline_calendar
+        result = offline_calendar.context(start, end)
+        if note:
+            result["note"] = note
+        json.dump(result, sys.stdout, ensure_ascii=False, indent=2)
+        print()
+        return 0
+
+    if not args.live:
+        return offline()
+    try:
+        payload = _hebcal(start, end, daf=True, calendar=True)
+    except Exception as exc:
+        return offline(f"Hebcal unreachable ({exc.__class__.__name__}); used the offline calculation.")
     by_date = _items_by_date(payload)
     records = []
     for offset in range((end - start).days + 1):

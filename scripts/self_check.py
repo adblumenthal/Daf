@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static package self-check for Daf 2.0."""
+"""Static package self-check for Daf 3.x."""
 
 from pathlib import Path
 import re
@@ -13,11 +13,30 @@ REQUIRED = [
     "agents/openai.yaml",
     "references/source-policy.md",
     "references/installation-notes.md",
+    "references/bymishnah.md",
+    "references/learning-log.md",
+    "references/audio-and-export.md",
+    "scripts/daf_common.py",
+    "scripts/sefaria_links.py",
+    "scripts/mishnah_map.py",
+    "scripts/learning_log.py",
+    "scripts/make_audio.py",
+    "scripts/make_pdf.py",
+    "scripts/archive_source.py",
+    "scripts/offline_calendar.py",
+    "scripts/vendor/pyluach/dates.py",
+    "scripts/vendor/README.md",
+    "data/archive_index.json",
+    "data/mishnah_maps.json",
+    "data/links/Chullin.json",
+    "tools/build_data.py",
     "scripts/yomi_context.py",
     "scripts/sefaria_fetch.py",
     "tests/acceptance-cases.md",
     "tests/test_release.py",
 ]
+# Present in the GitHub repo but intentionally left out of the installable .skill package.
+REPO_ONLY = ["evals/evals.json", "docs/testing-checklist.md", ".github/workflows/tests.yml"]
 
 
 def _read(path: str) -> str:
@@ -38,6 +57,7 @@ def _frontmatter_keys(skill: str) -> list[str]:
 
 def main() -> int:
     missing = [path for path in REQUIRED if not (ROOT / path).exists()]
+    repo_only_absent = [path for path in REPO_ONLY if not (ROOT / path).exists()]
     skill = _read("SKILL.md")
     readme = _read("README.md")
     acceptance = _read("tests/acceptance-cases.md")
@@ -47,7 +67,8 @@ def main() -> int:
     checks = {
         "valid minimal frontmatter": _frontmatter_keys(skill) == ["name", "description"],
         "skill name daf": "name: daf\n" in skill,
-        "version 2.0.0": "Version 2.0.0" in skill and "Version 2.0.0" in readme,
+        "version 3.1.1": "Version 3.1.1" in skill and "Version 3.1.1" in readme,
+        "works out of the box documented": "no network settings to change" in skill and "Works out of the box" in readme,
         "dedication preserved": "David and Barbara Blumenthal" in readme,
         "exact-daf command documented": "/daf Chullin 23b" in skill and "/daf Chullin 23b" in readme,
         "exact range documented": "/daf Chullin 23a-33b" in skill and "/daf Chullin 23a-33b" in readme,
@@ -63,8 +84,15 @@ def main() -> int:
                 "Yomi mode",
                 "Yomi completion and cycle context",
                 "Commentary and study modes",
+                "ByMishnah mode",
+                "Learning log",
+                "Follow-up menu",
             )
         ),
+        "bymishnah documented": "## Teach ByMishnah" in skill and "/daf bymishnah Chullin" in readme,
+        "learning log documented": "## Keep the learning log" in skill and "/daf log" in readme,
+        "follow-up menu documented": "## Offer follow-ups at the end" in skill and "It never regenerates it" in skill,
+        "new modifiers documented": all(m in skill for m in ("### `rishonim`", "`audio`", "`export`", "`nolog`")),
         "legacy command removed from current docs": "/dafyomi" not in current_docs,
         "yomi progress restored": (
             "Provide Yomi completion and cycle context" in skill
@@ -84,6 +112,9 @@ def main() -> int:
         print("Missing required files:")
         for path in missing:
             print(" -", path)
+    if repo_only_absent:
+        print("NOTE: repo-only files absent (normal for an installed package): "
+              + ", ".join(repo_only_absent))
     for label, ok in checks.items():
         print(f"{'OK' if ok else 'FAIL'}: {label}")
 
