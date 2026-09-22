@@ -1,2 +1,7 @@
 __pycache__/
 *.py[cod]
+.DS_Store
+*.skill
+*-workspace/
+*.mp3
+*.wav
