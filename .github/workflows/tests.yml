@@ -1,0 +1,23 @@
+name: Release checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Package self-check
+        run: python scripts/self_check.py
+      - name: Unit tests
+        run: python -m unittest tests/test_release.py -v
+      - name: Validate evals
+        run: python -c "import json; d=json.load(open('evals/evals.json')); assert d['skill_name']=='daf' and d['evals']; print(len(d['evals']), 'evals OK')"
